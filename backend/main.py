@@ -15,7 +15,7 @@ app.add_middleware(
 
 classifier = pipeline(
     "sentiment-analysis",
-    model="sshleifer/tiny-distilbert-base-uncased-finetuned-sst-2-english",
+    model="distilbert-base-uncased-finetuned-sst-2-english",
     device=-1
 )
 
