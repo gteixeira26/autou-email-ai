@@ -2,8 +2,8 @@ fastapi==0.110.*
 uvicorn[standard]==0.29.*
 pydantic==2.*
 
-transformers==4.43.*
-torch
+transformers==4.39.3
+torch==2.2.2
 
 pymupdf==1.24.*
 chardet==5.2.*
