@@ -13,7 +13,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Modelo leve para evitar erro de memória no Render Free
 classifier = pipeline(
     "sentiment-analysis",
     model="sshleifer/tiny-distilbert-base-uncased-finetuned-sst-2-english",
@@ -46,7 +45,6 @@ async def analyze_email(file: UploadFile = File(None), text: str = Form(None)):
     else:
         return {"error": "Nenhum conteúdo fornecido."}
 
-    print("Texto recebido:", email_text)
     email_lower = email_text.lower()
 
     if any(kw in email_lower for kw in ["feliz natal", "boas festas", "parabéns", "feriado"]):
@@ -60,8 +58,6 @@ async def analyze_email(file: UploadFile = File(None), text: str = Form(None)):
         response = "Agradecemos sua mensagem! Estamos à disposição caso precise de algo. 😉"
     else:
         result = classifier(email_text[:512])[0]
-        print("Resultado do modelo:", result)
-
         label = result["label"]
         if label == "NEGATIVE":
             category = "Produtivo"
