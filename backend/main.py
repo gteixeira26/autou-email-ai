@@ -13,7 +13,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-classifier = pipeline("sentiment-analysis")
+# Modelo leve para evitar erro de memória no Render Free
+classifier = pipeline(
+    "sentiment-analysis",
+    model="sshleifer/tiny-distilbert-base-uncased-finetuned-sst-2-english",
+    device=-1
+)
 
 def extract_text_from_pdf(file):
     doc = fitz.open(stream=file.file.read(), filetype="pdf")
