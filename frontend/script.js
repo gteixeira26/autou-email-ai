@@ -2,36 +2,33 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('analyzeButton').addEventListener('click', async () => {
     const fileInput = document.getElementById('file');
     const textInput = document.getElementById('text');
-    let emailContent = '';
 
     if (fileInput.files.length > 0) {
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-      reader.onload = async function () {
-        emailContent = reader.result;
-        await sendEmailContent(emailContent);
-      };
-      reader.readAsText(file);
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+      await sendFormData(formData);
+      fileInput.value = "";
+      textInput.value = "";
     } else if (textInput.value.trim() !== '') {
-      emailContent = textInput.value;
-      await sendEmailContent(emailContent);
+      const formData = new FormData();
+      formData.append("text", textInput.value);
+      await sendFormData(formData);
+      fileInput.value = "";
+      textInput.value = "";
     } else {
       alert("Por favor, insira um texto ou selecione um arquivo.");
     }
   });
 
-  async function sendEmailContent(content) {
-    const formData = new FormData();
-    formData.append("text", content);
-
+  async function sendFormData(formData) {
     try {
-      const response = await fetch('http://127.0.0.1:8000/analyze/', {
+      const response = await fetch("/api/analyze/", {
         method: 'POST',
         body: formData,
       });
 
       const data = await response.json();
-      document.getElementById('resultado').style.display = 'block';
+      document.getElementById('resultado').classList.remove('hidden');
       document.getElementById('categoria').textContent = data.category;
       document.getElementById('resposta_sugerida').textContent = data.response;
     } catch (error) {
@@ -39,4 +36,29 @@ document.addEventListener('DOMContentLoaded', function () {
       alert("Ocorreu um erro ao conectar com o servidor.");
     }
   }
+
+  function applyTheme(theme) {
+    const html = document.documentElement;
+    const button = document.getElementById("themeButton");
+    if (theme === "dark") {
+      html.classList.add("dark");
+      html.classList.remove("light");
+      button.innerHTML = "☀️ Alternar Tema";
+      localStorage.setItem("theme", "dark");
+    } else {
+      html.classList.remove("dark");
+      html.classList.add("light");
+      button.innerHTML = "🌙 Alternar Tema";
+      localStorage.setItem("theme", "light");
+    }
+  }
+
+  window.toggleTheme = function () {
+    const currentTheme = localStorage.getItem("theme") || "light";
+    const newTheme = currentTheme === "light" ? "dark" : "light";
+    applyTheme(newTheme);
+  };
+
+  const savedTheme = localStorage.getItem("theme") || "light";
+  applyTheme(savedTheme);
 });

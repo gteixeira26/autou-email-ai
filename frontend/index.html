@@ -6,13 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      darkMode: 'class'
-    }
+    tailwind.config = { darkMode: 'class' }
   </script>
 </head>
 <body class="transition-colors duration-300 min-h-screen bg-gray-100 dark:bg-gray-900">
-
   <div class="absolute top-4 right-4">
     <button onclick="toggleTheme()" id="themeButton" class="bg-orange-500 text-white px-4 py-2 rounded-full text-sm shadow hover:bg-orange-600 transition">
       🌙 Alternar Tema
@@ -27,97 +24,30 @@
 
       <div>
         <label class="block text-sm font-medium mb-1 dark:text-gray-300">📎 Enviar Arquivo (.txt / .pdf):</label>
-        <input id="fileInput" type="file" class="block w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white" />
+        <input id="file" type="file" class="block w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white" />
       </div>
 
       <div>
         <label class="block text-sm font-medium mb-1 dark:text-gray-300">📩 Ou cole o conteúdo do email:</label>
-        <textarea id="textInput" rows="4" placeholder="Cole aqui o conteúdo do email..." class="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white"></textarea>
+        <textarea id="text" rows="4" placeholder="Cole aqui o conteúdo do email..." class="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:text-white"></textarea>
       </div>
 
-      <button onclick="analyzeEmail()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded transition">
+      <button id="analyzeButton" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded transition">
         Analisar Email
       </button>
 
-      <div id="resultBox" class="hidden border-t pt-4 space-y-2 dark:border-gray-700">
+      <div id="resultado" class="hidden border-t pt-4 space-y-2 dark:border-gray-700">
         <p class="font-semibold text-lg dark:text-white text-black">🔍 Resultado:</p>
         <p class="text-black dark:text-white">
           <strong>📂 Categoria:</strong>
-          <span id="category" class="font-semibold"></span>
+          <span id="categoria" class="font-semibold"></span>
         </p>
         <p class="text-black dark:text-white"><strong>📄 Resposta Sugerida:</strong></p>
-        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded text-sm dark:text-white" id="responseText"></div>
+        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded text-sm dark:text-white" id="resposta_sugerida"></div>
       </div>
     </div>
   </div>
 
-  <script>
-    function applyTheme(theme) {
-      const html = document.documentElement;
-      const button = document.getElementById("themeButton");
-      if (theme === "dark") {
-        html.classList.add("dark");
-        html.classList.remove("light");
-        button.innerHTML = "☀️ Alternar Tema";
-        localStorage.setItem("theme", "dark");
-      } else {
-        html.classList.remove("dark");
-        html.classList.add("light");
-        button.innerHTML = "🌙 Alternar Tema";
-        localStorage.setItem("theme", "light");
-      }
-    }
-
-    function toggleTheme() {
-      const currentTheme = localStorage.getItem("theme") || "light";
-      const newTheme = currentTheme === "light" ? "dark" : "light";
-      applyTheme(newTheme);
-    }
-
-    window.onload = () => {
-      const savedTheme = localStorage.getItem("theme") || "light";
-      applyTheme(savedTheme);
-    };
-
-    async function analyzeEmail() {
-      const fileInput = document.getElementById("fileInput");
-      const textInput = document.getElementById("textInput").value.trim();
-      const resultBox = document.getElementById("resultBox");
-      const categoryEl = document.getElementById("category");
-      const responseEl = document.getElementById("responseText");
-
-      const formData = new FormData();
-      if (fileInput.files.length > 0) {
-        formData.append("file", fileInput.files[0]);
-      } else if (textInput) {
-        formData.append("text", textInput);
-      } else {
-        alert("Por favor, envie um arquivo ou digite um texto.");
-        return;
-      }
-
-      const response = await fetch("http://localhost:8000/analyze/", {
-        method: "POST",
-        body: formData
-      });
-
-      const data = await response.json();
-
-      if (data.error) {
-        alert(data.error);
-        return;
-      }
-
-      categoryEl.textContent = data.category;
-      if (data.category === "Produtivo") {
-        categoryEl.className = "text-green-500 font-semibold";
-      } else {
-        categoryEl.className = "text-red-500 font-semibold";
-      }
-
-      responseEl.textContent = data.response;
-      resultBox.classList.remove("hidden");
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
